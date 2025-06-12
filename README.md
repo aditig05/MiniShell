@@ -1,69 +1,43 @@
-# Custom Shell Implementation
+# MiniShell
 
-A simple yet powerful shell implementation in C that supports basic command execution, pipelining, and I/O redirection.
+A lightweight shell implementation in C that mimics core functionalities of bash/zsh. This project demonstrates system programming skills, process management, and low-level C development.
 
 ## Features
 
-### Basic Command Execution
-- Execute system commands (ls, grep, etc.)
-- Support for command arguments
-- Error handling and reporting
+### Core Functionality
+- Command execution (ls, grep, etc.)
+- Pipeline support (|)
+- I/O redirection (<, >, >>)
+- Built-in commands (cd, pwd, echo, pinfo, etc.)
+- Signal handling (Ctrl+C)
 
-### Pipeline Support
-- Multiple commands connected by pipes (|)
-- Example: `ls | grep .txt | wc -l`
+### Technical Implementation
+- Process management using fork-exec model
+- Pipeline mechanism using pipe() and dup2()
+- Recursive command preprocessing
+- Memory management and resource cleanup
+- Comprehensive error handling
 
-### I/O Redirection
-- Input redirection (`<`)
-- Output redirection (`>`)
-- Append mode (`>>`)
-- Example: `ls > output.txt`, `cat < input.txt`, `ls >> append.txt`
+## Installation
 
-### Built-in Commands
-- `cd`: Change directory
-- `pwd`: Print working directory
-- `echo`: Print arguments
-- `pinfo`: Process information
-- `setenv`: Set environment variable
-- `unsetenv`: Unset environment variable
-
-### Signal Handling
-- Graceful handling of Ctrl+C (SIGINT)
-- Clean process management
-
-## Project Structure
-
-```
-.
-├── main.c          # Main entry point and shell loop
-├── shell.h         # Header file with structures and declarations
-├── shell.c         # Core shell functionality
-├── parser.c        # Command parsing and preprocessing
-├── commands.c      # Built-in command implementations
-└── Makefile        # Build configuration
+1. Clone the repository:
+```bash
+git clone https://github.com/aditig05/MiniShell.git
+cd MiniShell
 ```
 
-## Building the Project
-
-1. Clone the repository
-2. Run make:
+2. Compile the project:
 ```bash
 make
 ```
 
-3. Clean build files:
-```bash
-make clean
-```
-
-## Usage
-
-1. Start the shell:
+3. Run the shell:
 ```bash
 ./myshell
 ```
 
-2. Example commands:
+## Usage Examples
+
 ```bash
 # Basic commands
 ls
@@ -85,21 +59,37 @@ pinfo
 setenv PATH /usr/local/bin:/usr/bin
 ```
 
-## Implementation Details
+## Project Structure
 
-### Command Parsing
-- Recursive preprocessing of commands
-- Support for complex command structures
-- Proper handling of spaces and special characters
+```
+.
+├── main.c          # Shell loop and signal handling
+├── shell.h         # Structures and declarations
+├── shell.c         # Core shell functionality
+├── parser.c        # Command parsing
+├── commands.c      # Built-in commands
+├── Makefile        # Build configuration
+└── README.md       # Project documentation
+```
+
+## Technical Details
 
 ### Process Management
 - Fork-exec model for command execution
-- Proper pipe creation and management
-- Signal handling and process cleanup
+- Pipe creation and management
+- Process synchronization
+- Resource cleanup
+
+### Command Parsing
+- Recursive preprocessing
+- Tokenization
+- Command structure handling
+- Special character processing
 
 ### Memory Management
-- Proper allocation and deallocation of resources
-- Clean handling of file descriptors
+- Dynamic allocation/deallocation
+- File descriptor management
+- Resource cleanup
 - Memory leak prevention
 
 ## Error Handling
@@ -115,16 +105,26 @@ setenv PATH /usr/local/bin:/usr/bin
 - No command substitution
 
 ## Future Improvements
-- Add job control support
-- Implement command history
-- Add command aliases
-- Support environment variable expansion
-- Add command substitution
-- Implement more built-in commands
-- Add support for command completion
+
+1. Job Control
+   - Background process support
+   - Process suspension
+   - Job management
+
+2. Enhanced Features
+   - Command history
+   - Command aliases
+   - Environment variable expansion
+   - Command completion
 
 ## Contributing
 Feel free to submit issues and enhancement requests!
 
 ## License
-This project is open source and available under the MIT License. 
+
+This project is open source and available under the MIT License.
+
+## Author
+
+Aditi Goyal
+- GitHub: [@aditig05](https://github.com/aditig05) 

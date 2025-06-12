@@ -1,0 +1,30 @@
+# Object files
+*.o
+
+# Binary files
+myshell
+
+# Debug files
+*.dSYM/
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*~
+
+# Build directory
+build/
+
+# Dependencies
+*.d
+*.dylib
+*.so
+*.so.*
+*.a
+*.la
+*.lo
+
+# System files
+.DS_Store
+Thumbs.db 
