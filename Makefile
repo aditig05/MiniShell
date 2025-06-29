@@ -1,20 +1,20 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -g
-LDFLAGS = 
+LDFLAGS = -lreadline -lhistory -ltermcap
 
-SRCS = main.c shell.c parser.c commands.c
-OBJS = $(SRCS:.c=.o)
+SRC = main.c shell.c parser.c commands.c natural_commands.c ai_suggest.c
+OBJ = $(SRC:.c=.o)
 TARGET = myshell
 
 .PHONY: all clean
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
+$(TARGET): $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(TARGET) 
+	rm -f $(OBJ) $(TARGET)

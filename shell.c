@@ -1,15 +1,82 @@
 #include "shell.h"
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <pwd.h>
+#include <errno.h>
+#include <time.h>
+
+#define MAX_HISTORY_SIZE 1000
+#define HISTORY_FILE ".myshell_history"
+
+static char *get_history_path() {
+    static char path[1024];
+    const char *home = getenv("HOME");
+    if (!home) {
+        struct passwd *pw = getpwuid(getuid());
+        home = pw->pw_dir;
+    }
+    snprintf(path, sizeof(path), "%s/%s", home, HISTORY_FILE);
+    return path;
+}
 
 void init_shell() {
     // Set up any necessary initialization
     setenv("SHELL", getcwd(NULL, 0), 1);
+    
+    // Set history file
+    const char *histfile = get_history_path();
+    
+    // Read history if file exists
+    if (access(histfile, F_OK) == 0) {
+        if (read_history(histfile) != 0) {
+            fprintf(stderr, "Warning: Could not read history from %s\n", histfile);
+        } else {
+            // Truncate history if needed
+            int history_size = history_length;
+            if (history_size > MAX_HISTORY_SIZE) {
+                history_truncate_file(histfile, MAX_HISTORY_SIZE);
+                clear_history();
+                read_history(histfile);
+            }
+        }
+    }
+    
+    // Set maximum history size
+    stifle_history(MAX_HISTORY_SIZE);
+    
+    // Initialize AI suggestion system
+    init_ai_suggest();
+    
+    // Analyze command history for patterns
+    analyze_command_history();
 }
 
-void print_prompt() {
+void save_command_history() {
+    const char *histfile = get_history_path();
+    if (write_history(histfile) != 0) {
+        fprintf(stderr, "Warning: Could not save history to %s: %s\n", 
+                histfile, strerror(errno));
+    }
+    
+    // Free AI suggestion resources
+    free_ai_suggest();
+}
+
+char *get_prompt() {
+    static char prompt[MAX_LINE * 2];  // Double the size to handle long paths
     char cwd[MAX_LINE];
-    getcwd(cwd, sizeof(cwd));
-    printf("\033[1;32m%s\033[0m$ ", cwd);
-    fflush(stdout);
+    
+    // Get current working directory
+    if (getcwd(cwd, sizeof(cwd)) == NULL) {
+        strcpy(cwd, "unknown");
+    }
+    
+    // Format prompt with color and path
+    snprintf(prompt, sizeof(prompt), "\001\033[1;32m\002%s\001\033[0m\002$ ", cwd);
+    
+    // Ensure null termination
+    prompt[sizeof(prompt) - 1] = '\0';
+    return prompt;
 }
 
 char *read_line() {
@@ -114,6 +181,9 @@ void execute_command(Command *cmd) {
         return;
     } else if (strcmp(cmd->command, "unsetenv") == 0) {
         builtin_unsetenv(cmd);
+        return;
+    } else if (strcmp(cmd->command, "help") == 0) {
+        builtin_help(cmd);
         return;
     }
     

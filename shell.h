@@ -35,12 +35,26 @@ typedef struct {
 
 // Function declarations
 void init_shell();
-void print_prompt();
-char *read_line();
-Pipeline *parse_line(char *line);
-void execute_pipeline(Pipeline *pipeline);
-void execute_command(Command *cmd);
-void handle_builtin(Command *cmd);
+char *get_prompt();
+void save_command_history();
+char *natural_to_shell_command(const char* input);
+
+// AI command suggestion functions - Phase 1: Local Statistical Analysis
+void init_ai_suggest();                          // Initialize the AI suggestion system
+void add_command_sequence(const char *prev, const char *current); // Add command to history
+char **get_command_suggestions(const char *prev_command, int *count); // Get suggestions
+void free_ai_suggest();                         // Free AI resources
+
+// Phase 2: External AI Integration (for future implementation)
+typedef enum {
+    AI_MODE_LOCAL,     // Use local statistical model (default)
+    AI_MODE_LLM        // Use external LLM (not yet implemented)
+} AIMode;
+
+// Future function declarations for Phase 2
+void set_ai_mode(AIMode mode);
+int enable_llm_integration(const char *api_key);
+void disable_llm_integration();
 
 // Built-in command functions
 void builtin_cd(Command *cmd);
@@ -49,6 +63,7 @@ void builtin_echo(Command *cmd);
 void builtin_pinfo(Command *cmd);
 void builtin_setenv(Command *cmd);
 void builtin_unsetenv(Command *cmd);
+void builtin_help(Command *cmd);
 
 // Helper functions
 void free_pipeline(Pipeline *pipeline);
